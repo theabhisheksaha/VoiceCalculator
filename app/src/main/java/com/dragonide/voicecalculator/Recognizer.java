@@ -4,14 +4,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -47,50 +43,24 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
     private static final int RECORDER_ENCODING_BIT = 16;
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private static final int MAX_DECIBELS = 120;
-    // CustomEditText customEditText;
-    private AudioRecord audioRecord;
-
-    private GLSurfaceView glSurfaceView;
+    private static final long REFRESH_INTERVAL_MS = 30;
     String resultSpeech;
-    private Thread recordingThread;
-    private byte[] buffer;
     ChatView chatView;
     SpeechRecognizer speechRecognizer;
     //  TextView resultText;
     CalculateResult calculateResult = new CalculateResult();
     TextToSpeech t1;
-    private static final long REFRESH_INTERVAL_MS = 30;
-    private boolean keepGoing = true;
-    private DrawView view;
     //   private MediaRecorder mRecorder = null;
     MyDatabase myDatabase;
     ImageView imageView;
     LinearLayout layout;
-    private ArrayList<Poses> posesArrayList;
     float tr = 0;
-
-    /**
-     * this listener helps us to synchronise real time
-     * and actual drawing
-     */
-
-
-    private AudioRecord.OnRecordPositionUpdateListener recordPositionUpdateListener = new AudioRecord.OnRecordPositionUpdateListener() {
-        @Override
-        public void onMarkerReached(AudioRecord recorder) {
-            //empty for now
-        }
-
-
-        @Override
-        public void onPeriodicNotification(AudioRecord recorder) {
-            if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING
-                    && audioRecord.read(buffer, 0, buffer.length) != -1) {
-
-            }
-        }
-    };
-
+    private GLSurfaceView glSurfaceView;
+    private Thread recordingThread;
+    private byte[] buffer;
+    private boolean keepGoing = true;
+    private DrawView view;
+    private ArrayList<Poses> posesArrayList;
 
     private void runGameLoop() {
         // update the game repeatedly
@@ -194,14 +164,6 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
         thread.start();
 
 
-        //glSurfaceView = (GLSurfaceView) findViewById(R.id.gl_surface);
-        // customEditText = (CustomEditText) findViewById(R.id.editText);
-        // customEditText.setDrawableClickListener(this);
-        //   customEditText.addTextChangedListener(this);
-        //   resultText = (TextView) findViewById(R.id.fResult);
-        //  mHorizon = new Horizon(glSurfaceView, getResources().getColor(R.color.background),
-        //         RECORDER_SAMPLE_RATE, RECORDER_CHANNELS, RECORDER_ENCODING_BIT);
-        //mHorizon.setMaxVolumeDb(MAX_DECIBELS);
         t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -417,12 +379,7 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
 
     }
 
-    public void stopRecording() {
-        if (audioRecord != null) {
-            audioRecord.release();
-        }
 
-    }
 
     @Override
     protected void onStop() {
@@ -455,12 +412,7 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
                     REQUEST_PERMISSION_RECORD_AUDIO);
         } else {
             startVoiceRecorder();
-          /*  initRecorder();
-            if (audioRecord.getState() == AudioRecord.STATE_INITIALIZED) {
-                PrefUtils.setBoolean(this, "isInstialized", true);
-                startRecording();
 
-            }*/
         }
     }
 
@@ -533,15 +485,7 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
             String ssearch;
             String fout;
 
-/*
 
-            InfixPostfixEvaluator eval = new    InfixPostfixEvaluator();
-            String expression = strings[0];
-            String postfix = eval.convert2Postfix(expression);
-
-            fout=  " "+ eval.evaluatePostfix(postfix);
-
-*/
 
             Infix fix=new Infix();
             String expression=strings[0];
