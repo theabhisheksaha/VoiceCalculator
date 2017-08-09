@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/background">
+
+
+    <ImageView
+        android:id="@+id/fwidgetcall"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+
+
+        android:src="@drawable/ic_mic_none"
+        android:layout_weight="0.3" />
+
+    <LinearLayout
+        android:id="@+id/album_appwidget"
+        android:layout_width="0dip"
+        android:layout_weight="3"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+
+        android:paddingLeft="18dip"
+        android:paddingRight="8dip"
+        android:weightSum="1">
+        <TextView
+            android:id="@+id/widget_Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textStyle=""
+            android:textSize="24sp"
+            android:text=""
+            android:maxLines="2"
+            android:fadingEdge="horizontal"
+            android:fadingEdgeLength="10dip"
+            android:ellipsize="marquee"
+            android:layout_weight="0.33" />
+
+        <TextView
+            android:id="@+id/fWidgetResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textStyle=""
+            android:textSize="24sp"
+            android:text=""
+            android:maxLines="2"
+            android:fadingEdge="horizontal"
+            android:fadingEdgeLength="10dip"
+            android:ellipsize="marquee"
+            />
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+
+
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.dragonide.voicecalculator.Recognizer">
+
+    <!--    <android.opengl.GLSurfaceView
+            android:id="@+id/gl_surface"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center" />-->
+    <com.dragonide.voicecalculator.ChatView
+        android:id="@+id/chat_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/root"
+        android:layout_alignParentTop="true"
+
+        android:layout_alignTop="@id/root" />
+    <!-- Insert customisation options here -->
+
+
+    <LinearLayout
+        android:id="@+id/root"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+
+        android:layout_alignParentBottom="true"
+        android:focusableInTouchMode="false"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:padding="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/centerImage"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/circle_shape"
+        android:padding="12dp"
+        android:src="@drawable/ic_mic_none_white_24dp" />
+
+
+</RelativeLayout>
