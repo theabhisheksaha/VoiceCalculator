@@ -11,10 +11,9 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-/**
- * Created by kevin on 14/12/23.
- */
+
 public class DrawView extends View {
+
 
     private final Path path2;
     public int numberOfWaves = 5;
@@ -23,15 +22,13 @@ public class DrawView extends View {
     public float phaseShift = -0.25f;
     public float phase = 0.f;
     public float maxAmplitude = 0;
-
+    public float amplitude = 0.5f;
     private boolean drawlock = false;
-
     private ArrayList<Paint> paintsArray = new ArrayList<>();
     private ArrayList<Path> pathArray = new ArrayList<>();
     private int ViewWidth = 0;
     private int ViewHeight = 0;
     private float ViewMid = 0;
-    public float amplitude = 0.5f;
 
     public DrawView(Context context) {
         super(context);
