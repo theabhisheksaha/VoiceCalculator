@@ -55,6 +55,7 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
     ImageView imageView;
     LinearLayout layout;
     float tr = 0;
+    long start, end;
     private GLSurfaceView glSurfaceView;
     private Thread recordingThread;
     private byte[] buffer;
@@ -97,7 +98,7 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
             public void run() {
                 view.phase += view.phaseShift;
 
-                Log.d("MaxAmplitude", tr + "");
+                // Log.d("MaxAmplitude", tr + "");
 //mRecorder.getMaxAmplitude()
 
 
@@ -215,7 +216,9 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
 
     @Override
     public void onEndOfSpeech() {
+        start = System.currentTimeMillis();
         tr = 0;
+
     }
 
     @Override
@@ -243,14 +246,23 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
 
     @Override
     public void onResults(Bundle bundle) {
+        end = System.currentTimeMillis();
+
+
         speechRecognizer.stopListening();
 
         imageView.setVisibility(View.VISIBLE);
         layout.setVisibility(View.INVISIBLE);
         tr = 0;
+        int confinc = 0;
+
         ArrayList<String> arraylist = bundle.getStringArrayList("results_recognition");
+        float[] confidencescore = bundle.getFloatArray("confidence_scores");
         for (String key : arraylist) {
-            Log.d("myApplication", key);
+            Log.d("resultswithscores", key + " - " + confidencescore[confinc]);
+
+
+            confinc++;
         }
 
 
@@ -277,25 +289,20 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
         if (resultSpeech.contains("fuck") || resultSpeech.contains("f***") || resultSpeech.contains("bitch") || resultSpeech.contains("b****")
                 || resultSpeech.contains("shit") || resultSpeech.contains("s***")) {
 
-            ChatMessage c = new ChatMessage(resultSpeech, System.currentTimeMillis(), ChatMessage.Type.SENT);
+            ChatMessage c = new ChatMessage(resultSpeech, System.currentTimeMillis(), ChatMessage.Type.SENT, "0");
             chatView.addMessage(c);
 
             speak("Don't ever try to talk me like that");
-            ChatMessage c1 = new ChatMessage("Please be polite", System.currentTimeMillis(), ChatMessage.Type.RECEIVED);
+            ChatMessage c1 = new ChatMessage("Please be polite", System.currentTimeMillis(), ChatMessage.Type.RECEIVED, "0");
             chatView.addMessage(c1);
 
 
-
-        }else{
+        } else {
             searchOnGoogle(resultSpeech);
-            ChatMessage c = new ChatMessage(resultSpeech, System.currentTimeMillis(), ChatMessage.Type.SENT);
+
+            ChatMessage c = new ChatMessage(resultSpeech, System.currentTimeMillis(), ChatMessage.Type.SENT, "" + (end - start));
             chatView.addMessage(c);
         }
-
-
-
-
-
 
 
     }
@@ -360,7 +367,7 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
             t1.stop();
             t1.shutdown();
         }
-        if (speechRecognizer!=null) {
+        if (speechRecognizer != null) {
             speechRecognizer.stopListening();
         }
         super.onPause();
@@ -378,7 +385,6 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
         }
 
     }
-
 
 
     @Override
@@ -417,8 +423,6 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
     }
 
 
-
-
     public void searchOnGoogle(String inp) {
         if (!calculateResult.isCancelled()) {
             calculateResult.cancel(true);
@@ -431,32 +435,35 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
 
     }
 
-    public void speak(String s){
-        if (Build.VERSION.SDK_INT>=21) {
+    public void speak(String s) {
+        if (Build.VERSION.SDK_INT >= 21) {
 
             t1.speak(s, TextToSpeech.QUEUE_FLUSH, null, "12");
-        }else{
+        } else {
             t1.speak(s, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
+
     private class CalculateResult extends AsyncTask<String, Void, String> {
+        long cstart, cend;
+
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (s.equals("none")) {
                 //resultText.setText("");
                 speak("I don't think that is a Mathematical expression, Try Speaking again");
-                ChatMessage c = new ChatMessage("I don't think that is a Mathematical expression, Try Speaking again", System.currentTimeMillis(), ChatMessage.Type.RECEIVED);
+                ChatMessage c = new ChatMessage("I don't think that is a Mathematical expression, Try Speaking again", System.currentTimeMillis(), ChatMessage.Type.RECEIVED, "0");
                 chatView.addMessage(c);
                 //   Toast.makeText(Recognizer.this, "Not a mathematical expression", Toast.LENGTH_SHORT).show();
             } else if (s.equals("conn")) {
                 // resultText.setText("");
                 speak("Sometimes I need a stable connection");
-                ChatMessage c = new ChatMessage("I don't have a stable connection", System.currentTimeMillis(), ChatMessage.Type.RECEIVED);
+                ChatMessage c = new ChatMessage("I don't have a stable connection", System.currentTimeMillis(), ChatMessage.Type.RECEIVED, "0");
                 chatView.addMessage(c);
                 // Toast.makeText(Recognizer.this, "Network Connection failure", Toast.LENGTH_SHORT).show();
             } else {
-                ChatMessage c = new ChatMessage(s, System.currentTimeMillis(), ChatMessage.Type.RECEIVED);
+                ChatMessage c = new ChatMessage(s, System.currentTimeMillis(), ChatMessage.Type.RECEIVED, "" + (cend - cstart));
                 chatView.addMessage(c);
                 speak(s);
                /* if (Build.VERSION.SDK_INT>=21) {
@@ -473,7 +480,6 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
         }
 
 
-
         @Override
         protected void onCancelled() {
             super.onCancelled();
@@ -481,28 +487,32 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
 
         @Override
         protected String doInBackground(String... strings) {
+            cstart = System.currentTimeMillis();
             //  strings[0] = strings[0].replaceAll(" ","");
             String ssearch;
             String fout;
 
+// = ""+ fix.infix(expression);
 
 
-            Infix fix=new Infix();
-            String expression=strings[0];
-           // = ""+ fix.infix(expression);
+            Infix fix = new Infix();
+            String expression = strings[0];
+
 
             try {
                 double a = fix.infix(expression);
-                if(a==(Math.round(a))){
+                if (a == (Math.round(a))) {
                     //Integer
-                    fout = ""+ (int) a;
+                    fout = "" + (int) a;
 
-                }else{
-                    fout= ""+ a;
+                } else {
+                    fout = "" + a;
                     //Float
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+
+
                 try {
                     ssearch = "http://www.google.com/m/search?q="
                             + URLEncoder.encode(strings[0],
@@ -514,6 +524,8 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
                 }
 
                 try {
+
+
                     Document d = Jsoup.connect(ssearch).get();
                     Log.d("search", d.html());
                     Element box = d.select("span#cwos").first();
@@ -526,19 +538,19 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
                             fout = textBox.text();
                         else {
                             fout = "none";
-                        }
-
-
                     }
+
+
+                }
+
 
                 } catch (IOException w) {
                     fout = "conn";
                     w.printStackTrace();
-                }
+            }
 
 
             }
-
 
 
             //fout
@@ -576,8 +588,8 @@ public class Recognizer extends AppCompatActivity implements RecognitionListener
                 fout = "conn";
                 e.printStackTrace();
             }*/
-
+            cend = System.currentTimeMillis();
             return fout;
-        }
+    }
     }
 }

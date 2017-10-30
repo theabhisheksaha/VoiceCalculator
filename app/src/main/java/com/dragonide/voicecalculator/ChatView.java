@@ -3,26 +3,16 @@ package com.dragonide.voicecalculator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 
 import java.util.ArrayList;
 
@@ -52,7 +42,7 @@ public class ChatView extends RelativeLayout {
     private float bubbleElevation;
 
     private int bubbleBackgroundRcv, bubbleBackgroundSend; // Drawables cause cardRadius issues. Better to use background color
-    private Drawable sendButtonIcon, buttonDrawable;
+
     private TypedArray attributes, textAppearanceAttributes;
     private Context context;
 
@@ -83,7 +73,7 @@ public class ChatView extends RelativeLayout {
     }
 
     private void initializeViews() {
-        chatListView = (ListView) findViewById(R.id.chat_list);
+        chatListView = findViewById(R.id.chat_list);
 
 
 
@@ -188,9 +178,9 @@ public class ChatView extends RelativeLayout {
         this.onSentMessageListener = onSentMessageListener;
     }
 
-    private void sendMessage(String message, long stamp) {
+    private void sendMessage(String message, long stamp, String exeTime) {
 
-        ChatMessage chatMessage = new ChatMessage(message, stamp, ChatMessage.Type.SENT);
+        ChatMessage chatMessage = new ChatMessage(message, stamp, ChatMessage.Type.SENT, exeTime);
         if (onSentMessageListener != null && onSentMessageListener.sendMessage(chatMessage)) {
             chatViewListAdapter.addMessage(chatMessage);
            // inputEditText.setText("");
@@ -292,6 +282,7 @@ public class ChatView extends RelativeLayout {
 
             holder.getMessageTextView().setText(chatMessages.get(position).getMessage());
             holder.getTimestampTextView().setText(chatMessages.get(position).getFormattedTime());
+            holder.getExecutionTime().setText(chatMessages.get(position).getProcessTime() + "ms");
             holder.getChatBubble().setCardElevation(bubbleElevation);
             holder.setBackground(type);
 
@@ -324,30 +315,38 @@ public class ChatView extends RelativeLayout {
             CardView bubble;
             TextView messageTextView;
             TextView timestampTextView;
+            TextView executionTime;
 
             private ViewHolder(View convertView) {
                 row = convertView;
-                bubble = (CardView) convertView.findViewById(R.id.bubble);
+                bubble = convertView.findViewById(R.id.bubble);
             }
 
             private TextView getMessageTextView() {
                 if (messageTextView == null) {
-                    messageTextView = (TextView) row.findViewById(R.id.message_text_view);
+                    messageTextView = row.findViewById(R.id.message_text_view);
                 }
                 return messageTextView;
             }
 
             private TextView getTimestampTextView() {
                 if (timestampTextView == null) {
-                    timestampTextView = (TextView) row.findViewById(R.id.timestamp_text_view);
+                    timestampTextView = row.findViewById(R.id.timestamp_text_view);
                 }
 
                 return timestampTextView;
             }
 
+            public TextView getExecutionTime() {
+                if (executionTime == null) {
+                    executionTime = row.findViewById(R.id.time_for_processing);
+                }
+                return executionTime;
+            }
+
             private CardView getChatBubble() {
                 if (bubble == null) {
-                    bubble = (CardView) row.findViewById(R.id.bubble);
+                    bubble = row.findViewById(R.id.bubble);
                 }
 
                 return bubble;

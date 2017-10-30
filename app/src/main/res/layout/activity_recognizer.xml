@@ -29,7 +29,7 @@
     <LinearLayout
         android:id="@+id/root"
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
 
         android:layout_alignParentBottom="true"
         android:focusableInTouchMode="false"
@@ -50,7 +50,7 @@
         android:layout_marginBottom="16dp"
         android:background="@drawable/circle_shape"
         android:padding="12dp"
-        android:src="@drawable/ic_mic_none_white_24dp" />
+        android:src="@drawable/ic_mic_none" />
 
 
 </RelativeLayout>

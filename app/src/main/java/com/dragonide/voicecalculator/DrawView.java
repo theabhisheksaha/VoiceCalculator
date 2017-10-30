@@ -58,7 +58,7 @@ public class DrawView extends View {
             }
         }
 
-        path2 = new Path();
+        /* path2 = new Path(); */
     }
 
 

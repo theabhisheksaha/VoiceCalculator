@@ -8,11 +8,21 @@ public class ChatMessage {
     private String message;
     private long timestamp;
     private Type type;
+    private String processTime;
 
-    public ChatMessage(String message, long timestamp, Type type){
+    public ChatMessage(String message, long timestamp, Type type, String processTime) {
         this.message = message;
         this.timestamp = timestamp;
         this.type = type;
+        this.processTime = processTime;
+    }
+
+    public String getProcessTime() {
+        return processTime;
+    }
+
+    public void setProcessTime(String processTime) {
+        this.processTime = processTime;
     }
 
     public long getTimestamp() {
